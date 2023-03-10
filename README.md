@@ -8,7 +8,7 @@ composer require bermudaphp/reflection-type-matcher
     $reflector = new ReflectionFunction(static fn(int $a, int $b) => $a + $b);
     $param = $reflector->getParameters()[0];
     
-    $matcher = new \Reflector\TypeMatcher();
+    $matcher = new TypeMatcher();
     
     $matcher->match($param->getType(), '22'); // false
     $matcher->match($param->getType(), 22); // true
