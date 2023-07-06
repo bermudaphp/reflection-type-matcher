@@ -24,9 +24,7 @@ final class TypeMatcher
     private function matchUnionType(\ReflectionUnionType $type, mixed $var): bool
     {
         if ($type->allowsNull() && $var === null) return true;
-        foreach ($type->getTypes() as $type) {
-            if ($this->match($type, $var)) return true;
-        }
+        foreach ($type->getTypes() as $type) if ($this->match($type, $var)) return true;
 
         return false;
     }
@@ -34,9 +32,7 @@ final class TypeMatcher
     private function matchIntersectionType(\ReflectionIntersectionType $type, mixed $var): bool
     {
         if ($type->allowsNull() && $var === null) return true;
-        foreach ($type->getTypes() as $type) {
-            if (!$this->match($type, $var)) return false;
-        }
+        foreach ($type->getTypes() as $type) if (!$this->match($type, $var)) return false;
 
         return true;
     }
