@@ -6,6 +6,11 @@
       "Bermuda\\Reflection\\": "src/"
     }
   },
+  "autoload-dev": {
+      "psr-4": {
+        "Bermuda\\Reflection\\Tests\\": "tests/"
+      }
+    },
   "require": {
     "php": "^8.1"
   },
