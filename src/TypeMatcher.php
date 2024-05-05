@@ -11,7 +11,7 @@ final class TypeMatcher
     {
         if ($type instanceof \ReflectionNamedType) return $this->matchNamedType($type, $var);
         if ($type instanceof \ReflectionUnionType) return $this->matchUnionType($type, $var);
-        if ($type instanceof \ReflectionIntersectionType) return $this->matchIntersectionType($type);
+        if ($type instanceof \ReflectionIntersectionType) return $this->matchIntersectionType($type, $var);
 
         throw new \InvalidArgumentException(sprintf('%s type not supported', $type::class));
     }
