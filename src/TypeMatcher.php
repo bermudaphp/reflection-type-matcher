@@ -33,7 +33,7 @@ final class TypeMatcher
             'bool' => is_bool($var),
             'int' => $strict ? is_int($var) : is_numeric($var),
             'float' => $strict ? is_float($var) : is_numeric($var),
-            'string' => $strict ? is_string($var) : $var instanceof \Stringable,
+            'string' => $strict ? is_string($var) : (is_string($var) || $var instanceof \Stringable),
             'false' => $var === false,
             'true' => $var === true,
             'callable' => is_callable($var),
