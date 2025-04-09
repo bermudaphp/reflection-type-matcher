@@ -19,7 +19,7 @@ final class TypeMatcher
     private function matchNamedType(\ReflectionNamedType $type, mixed $var, bool $strict): bool
     {
         if ($type->allowsNull() && $var === null) return true;
-        if ($type->isBuiltin()) return $this->matchBuiltinType($type, $var);
+        if ($type->isBuiltin()) return $this->matchBuiltinType($type, $var, $strict);
 
         return $this->isInstanceOf($var, $type->getName());
     }
