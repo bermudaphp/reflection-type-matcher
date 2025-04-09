@@ -10,8 +10,9 @@ composer require bermudaphp/reflection-type-matcher
     
     $matcher = new TypeMatcher();
     
-    $matcher->match($param->getType(), '22'); // false
+    $matcher->match($param->getType(), '22'); // true
     $matcher->match($param->getType(), 22); // true
+    $matcher->match($param->getType(), '22', true); // false
     
     $reflector = new ReflectionFunction(static fn(A&B $arg) => $arg);
     $param = $reflector->getParameters()[0];
