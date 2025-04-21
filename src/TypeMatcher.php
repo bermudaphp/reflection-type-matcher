@@ -19,11 +19,11 @@ final class TypeMatcher
      *
      * @throws \InvalidArgumentException If the type is not supported.
      */
-    public function match(\ReflectionType $type, mixed $var, bool $strict = false): bool
+    public static function match(\ReflectionType $type, mixed $var, bool $strict = false): bool
     {
-        if ($type instanceof \ReflectionNamedType) return $this->matchNamedType($type, $var, $strict);
-        if ($type instanceof \ReflectionUnionType) return $this->matchUnionType($type, $var, $strict);
-        if ($type instanceof \ReflectionIntersectionType) return $this->matchIntersectionType($type, $var, $strict);
+        if ($type instanceof \ReflectionNamedType) return self::matchNamedType($type, $var, $strict);
+        if ($type instanceof \ReflectionUnionType) return self::matchUnionType($type, $var, $strict);
+        if ($type instanceof \ReflectionIntersectionType) return self::matchIntersectionType($type, $var, $strict);
 
         throw new \InvalidArgumentException(sprintf('%s type not supported', $type::class));
     }
@@ -37,12 +37,12 @@ final class TypeMatcher
      *
      * @return bool Returns true if the variable matches the type; otherwise, false.
      */
-    private function matchNamedType(\ReflectionNamedType $type, mixed $var, bool $strict): bool
+    private static function matchNamedType(\ReflectionNamedType $type, mixed $var, bool $strict): bool
     {
         if ($type->allowsNull() && $var === null) return true;
-        if ($type->isBuiltin()) return $this->matchBuiltinType($type, $var, $strict);
+        if ($type->isBuiltin()) return self::matchBuiltinType($type, $var, $strict);
         
-        return $this->isInstanceOf($var, $type->getName());
+        return self::isInstanceOf($var, $type->getName());
     }
 
     /**
@@ -54,7 +54,7 @@ final class TypeMatcher
      *
      * @return bool Returns true if the variable matches the built-in type; otherwise, false.
      */
-    private function matchBuiltinType(\ReflectionType $type, mixed $var, bool $strict): bool
+    private static function matchBuiltinType(\ReflectionType $type, mixed $var, bool $strict): bool
     {
         return match ($type->getName()) {
             'mixed' => true, 
@@ -81,11 +81,11 @@ final class TypeMatcher
      *
      * @return bool Returns true if the variable matches at least one type in the union; otherwise, false.
      */
-    private function matchUnionType(\ReflectionUnionType $type, mixed $var, bool $strict): bool
+    private static function matchUnionType(\ReflectionUnionType $type, mixed $var, bool $strict): bool
     {
         if ($type->allowsNull() && $var === null) return true;
         foreach ($type->getTypes() as $type) {
-            if ($this->match($type, $var, $strict)) return true;
+            if (self::match($type, $var, $strict)) return true;
         }
 
         return false;
@@ -100,11 +100,11 @@ final class TypeMatcher
      *
      * @return bool Returns true if the variable matches every type in the intersection; otherwise, false.
      */
-    private function matchIntersectionType(\ReflectionIntersectionType $type, mixed $var, bool $strict): bool
+    private static function matchIntersectionType(\ReflectionIntersectionType $type, mixed $var, bool $strict): bool
     {
         if ($type->allowsNull() && $var === null) return true;
         foreach ($type->getTypes() as $type) {
-            if (!$this->match($type, $var, $strict)) return false;
+            if (!self::match($type, $var, $strict)) return false;
         }
 
         return true;
@@ -118,7 +118,7 @@ final class TypeMatcher
      *
      * @return bool Returns true if the variable is an instance of the specified class; otherwise, false.
      */
-    private function isInstanceOf(mixed $obj, string $cls): bool
+    private static function isInstanceOf(mixed $obj, string $cls): bool
     {
         return $obj instanceof $cls;
     }
