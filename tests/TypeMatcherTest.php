@@ -8,12 +8,6 @@ use ReflectionFunction;
 
 class TypeMatcherTest extends TestCase
 {
-    private TypeMatcher $matcher;
-    protected function setUp(): void
-    {
-        $this->matcher = new TypeMatcher;
-    }
-
     /**
      * @throws \ReflectionException
      */
@@ -22,7 +16,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(bool $mode): bool => $mode;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), true, true);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), true, true);
 
         $this->assertTrue($result);
     }
@@ -35,7 +29,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(array $var): array => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), [], true);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), [], true);
 
         $this->assertTrue($result);
     }
@@ -48,7 +42,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(object $var): object => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), new \StdClass, true);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), new \StdClass, true);
 
         $this->assertTrue($result);
     }
@@ -58,7 +52,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(mixed $var): mixed => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), new \StdClass, true);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), new \StdClass, true);
 
         $this->assertTrue($result);
     }
@@ -68,7 +62,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(string $var): string => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), '', true);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), '', true);
         $this->assertTrue($result);
 
         $var = new class implements \Stringable
@@ -79,9 +73,9 @@ class TypeMatcherTest extends TestCase
             }
         };
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), $var, true);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), $var, true);
         $this->assertFalse($result);
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), $var);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), $var);
         $this->assertTrue($result);
     }
 
@@ -90,11 +84,11 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(int $var): int => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), 1);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), 1);
         $this->assertTrue($result);
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), '1');
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), '1');
         $this->assertTrue($result);
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), '1', true);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), '1', true);
         $this->assertFalse($result);
     }
 
@@ -103,11 +97,11 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(float $var): float => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), 1.1);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), 1.1);
         $this->assertTrue($result);
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), '1.1');
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), '1.1');
         $this->assertTrue($result);
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), '1.1', true);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), '1.1', true);
         $this->assertFalse($result);
     }
 
@@ -116,7 +110,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(A $var): A => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(),
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(),
             new class implements A {}
         );
 
@@ -128,7 +122,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(A&B $var): A&B => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(),
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(),
             new class implements A,B {}
         );
 
@@ -140,7 +134,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(A|B $var): A|B => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(),
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(),
             new class implements B {}
         );
 
@@ -152,7 +146,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(null|A|B $var=null): A|B|null => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), null);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), null);
 
         $this->assertTrue($result);
     }
@@ -162,7 +156,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(callable $var): callable => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), 'strtoupper');
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), 'strtoupper');
 
         $this->assertTrue($result);
     }
@@ -172,7 +166,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(iterable $var): iterable => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), []);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), []);
 
         $this->assertTrue($result);
     }
@@ -182,7 +176,7 @@ class TypeMatcherTest extends TestCase
         $callback = static fn(int $var): int => $var;
         $reflector = new ReflectionFunction($callback);
 
-        $result = $this->matcher->match($reflector->getParameters()[0]->getType(), '50', true);
+        $result = TypeMatcher::match($reflector->getParameters()[0]->getType(), '50', true);
         $this->assertFalse($result);
     }
 
